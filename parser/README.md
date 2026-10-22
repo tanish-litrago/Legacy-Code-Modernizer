@@ -1,19 +1,19 @@
-# Parser / AST Module
+# Parser and AST Module
 
-Responsible for turning raw Pascal/C source files into an Abstract Syntax Tree (AST)
-using Tree-sitter, and exposing a clean structured representation (functions, loops,
-conditionals, variables) for the dependency graph and LLM orchestration modules to consume.
+Parses raw Pascal and C source code into an Abstract Syntax Tree (AST) using Tree-sitter, then extracts an Intermediate Representation (IR) containing function signatures, variable scopes, call sites, and control-flow blocks.
 
 ## Files
-- `ast_builder.py` — loads the Tree-sitter grammar and parses source into a raw AST.
-- `ast_extractor.py` — walks the raw AST and extracts structured facts (function defs,
-  calls, control-flow nodes) into a simpler intermediate representation (IR).
-- `models.py` — data classes for the extracted IR (FunctionNode, LoopNode, etc).
 
-## TODO
-- [ ] Load Tree-sitter Pascal grammar
-- [ ] Load Tree-sitter C grammar
-- [ ] Implement extraction for function definitions
-- [ ] Implement extraction for control-flow (if/while/for)
-- [ ] Implement extraction for variable declarations
-- [ ] Unit tests against sample files in /samples
+- `ast_builder.py`: Loads grammar bindings (`tree-sitter-c`, `tree-sitter-pascal`) and parses source text into concrete syntax trees.
+- `ast_extractor.py`: Traverses syntax trees to generate structured IR dataclasses.
+- `models.py`: Data models defining `FunctionNode`, `VariableNode`, `CallNode`, and `ControlFlowNode`.
+
+## Implemented Features
+
+- [x] Tree-sitter Pascal grammar loading
+- [x] Tree-sitter C grammar loading
+- [x] Automatic language resolution from file extensions
+- [x] Extraction of function and procedure signatures with parameters and return types
+- [x] Extraction of control-flow structures (if, while, for)
+- [x] Variable declaration parsing with scope associations
+- [x] Unit test suite covering language edge cases (18 tests)

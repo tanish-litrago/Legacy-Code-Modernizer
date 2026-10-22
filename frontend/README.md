@@ -1,46 +1,61 @@
-# Frontend / User Interface
+# Frontend Interfaces
 
-The **Legacy Code Modernizer** frontend provides an intuitive, high-performance user interface for transforming legacy Pascal and C source code into idiomatic modern C++.
+The project provides three frontend options depending on your preferred workflow.
 
-## Options Available
+## Frontend Options
 
-### Option 1: Modern Web Application (Recommended)
-A rich, responsive Web UI with dark mode, glassmorphism, animated pipeline stepper, drag-and-drop file ingestion, physics-based interactive call-graph visualization, side-by-side diff comparison, and live telemetry.
+### Option 1: React Single-Page Application (Primary)
+
+Modern React web application built with Vite and Tailwind CSS. Connects to the FastAPI backend with real-time SSE streaming.
+
+- **Location**: `frontend/react-app/`
+- **Tech Stack**: React 19, Vite, Tailwind CSS v4, Lucide React, D3.js, Diff2Html.
+- **Key Features**:
+  - **Live Pipeline Streaming**: Connects to `GET /stream/{file_id}` to display progress as the backend parses, builds graphs, generates code, and validates syntax.
+  - **D3 Call Graph**: Force-directed interactive graph with drag, zoom, node selection, and caller/callee inspection drawer.
+  - **Diff Viewer**: Integrated Diff2Html supporting synchronized side-by-side and line-by-line views with fixed 20px line heights.
+  - **Theme System**: Supports light and dark modes with dedicated high-contrast palettes. Light mode is configured as default.
+  - **Sample Presets**: Quick-load buttons for bundled Pascal and C examples.
+
+#### Running the React Client:
+```bash
+cd frontend/react-app
+npm install
+npm run dev
+```
+
+Opens at `http://localhost:5173`.
+
+---
+
+### Option 2: Standalone Static Client
+
+Lightweight vanilla HTML, CSS, and JavaScript interface using HTML5 Canvas for graph rendering.
 
 - **Location**: `frontend/index.html`, `frontend/style.css`, `frontend/app.js`
-- **Features**:
-  - **Pipeline Stepper**: Visual tracking of Source Ingestion &rarr; AST & IR Extraction &rarr; Call Graph Analysis &rarr; LLM Synthesis &rarr; Validation & Diff.
-  - **Interactive Call Graph**: HTML5 Canvas force-directed graph with pan, zoom, node drag, node inspector drawer, and caller/callee inspection.
-  - **Side-by-Side Diff**: Synchronized dual-pane diff comparison and unified patch mode.
-  - **Quick-Load Samples**: Built-in Pascal (`sample1.pas`, loop matrix) and C (`sample1.c`) presets.
-  - **Direct Backend Integration**: Connects to FastAPI backend (`http://localhost:8000`) with auto-fallback to offline Demo Mode.
-  - **Modern C++ Actions**: 1-click clipboard copy and `.cpp` file download.
+- **Features**: Offline demo mode fallback, Canvas force-directed graph, side-by-side text diff.
 
-#### How to run:
-Simply open `frontend/index.html` in any modern web browser, or serve via any static web server:
+#### Running the Static Client:
 ```bash
 # Using Python
 python -m http.server 3000 --directory frontend
 
-# Or using Node / npx
+# Or using Node
 npx serve frontend
 ```
-Then visit `http://localhost:3000`.
+
+Opens at `http://localhost:3000`.
 
 ---
 
-### Option 2: Streamlit Application
-A Python-based dashboard for rapid data science and experimentation.
+### Option 3: Streamlit Dashboard
+
+Python-based dashboard for rapid testing and experimentation.
 
 - **Location**: `frontend/app.py`
-- **Features**:
-  - Sidebar configuration with backend health checks.
-  - File uploader and quick sample selector.
-  - Matplotlib / NetworkX call graph visualization.
-  - Side-by-side legacy vs. modern C++ comparison columns.
-  - Unified diff view and `.cpp` file download button.
+- **Features**: Matplotlib and NetworkX graph visualization, side-by-side text comparison columns, backend status checks.
 
-#### How to run:
+#### Running the Streamlit App:
 ```bash
 pip install streamlit networkx matplotlib requests
 streamlit run frontend/app.py
@@ -48,13 +63,14 @@ streamlit run frontend/app.py
 
 ---
 
-## Backend API Endpoints Used
-The frontend communicates with the FastAPI service:
-- `GET /health` &mdash; Connection health check.
-- `POST /upload` &mdash; Ingests `.pas`, `.pp`, `.dpr`, `.lpr`, `.c`, or `.h` source file.
-- `POST /process/{file_id}` &mdash; Executes AST extraction, dependency graph generation, and LLM modernizer pipeline.
-- `GET /result/{file_id}` &mdash; Retrieves cached processing results.
+## Backend API Endpoints
 
+The frontends integrate with the following FastAPI routes:
 
-
-
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/health` | Health check endpoint |
+| `POST` | `/upload` | Upload `.pas` or `.c` source file |
+| `POST` | `/process/{file_id}` | Run conversion pipeline synchronously |
+| `GET` | `/stream/{file_id}` | Stream conversion progress via Server-Sent Events |
+| `GET` | `/result/{file_id}` | Retrieve completed modern C++, graph JSON, and diff |

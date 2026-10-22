@@ -1,14 +1,17 @@
 # Dependency Graph Module
 
-Builds a NetworkX graph representing function call relationships and control-flow
-dependencies, using the IR produced by the parser module.
+Constructs a NetworkX directed graph representing function call relationships and control dependencies from parser IR.
 
 ## Files
-- `graph_builder.py` — converts a list of FunctionNode IR objects into a NetworkX DiGraph.
-- `graph_export.py` — export/visualization helpers (e.g. to PNG/JSON for the frontend).
 
-## TODO
-- [ ] Build call graph (function -> function edges)
-- [ ] Build control-flow graph within a function (optional, phase 2)
-- [ ] Export graph as JSON for frontend rendering
-- [ ] Export graph as PNG for the report
+- `graph_builder.py`: Converts lists of `FunctionNode` instances into a NetworkX `DiGraph` and extracts caller/callee text summaries for prompt injection.
+- `graph_export.py`: Serializes graphs into NetworkX node-link JSON format for D3 visualization and renders PNG plots.
+
+## Implemented Features
+
+- [x] Function call graph construction (`build_call_graph`)
+- [x] Node metadata enrichment (parameters, return type, language)
+- [x] Context generation for LLM prompts (`get_graph_context`)
+- [x] Node-link JSON export for web interfaces (`to_json`)
+- [x] PNG export for reporting (`export_to_png`)
+- [x] Unit test suite covering graph metrics and serialization (10 tests)

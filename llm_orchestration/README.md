@@ -1,20 +1,19 @@
 # LLM Orchestration Module
 
-Handles prompt construction, chunking of code + AST/graph context, calling the LLM
-to generate modern C++, and validating the generated output for syntax correctness
-and structural fidelity to the original logic.
+Handles structured prompt generation, Ollama LLM execution, C++ syntax validation, hallucination checking, and compiler-directed repair loops.
 
 ## Files
-- `prompt_builder.py` — builds prompts combining source code, extracted IR, and
-  dependency-graph context.
-- `llm_client.py` — wraps the LLM API call.
-- `validator.py` — syntax-checks generated C++ and flags hallucinated symbols
-  (variables/functions that don't exist in the original source).
 
-## TODO
-- [ ] Design chunking strategy for large source files
-- [ ] Build prompt template (source + IR + graph context -> C++ output)
-- [ ] Wire up LLM API call
-- [ ] Implement syntax validation (e.g. via a C++ parser/compiler dry-run)
-- [ ] Implement "no hallucinated symbols" check against original IR
-- [ ] Retry/repair loop for failed validations
+- `prompt_builder.py`: Constructs system and user prompts injecting source code, AST intermediate representation, and caller/callee graph context.
+- `llm_client.py`: Calls local Ollama inference API (`qwen2.5-coder:3b`) with automated retries on syntax validation errors.
+- `validator.py`: Validates generated C++ with Tree-sitter and detects hallucinated function/variable identifiers against original IR tokens.
+
+## Implemented Features
+
+- [x] Structured prompt templates for single functions and whole source files
+- [x] Context injection combining AST IR metadata and call-graph dependencies
+- [x] Ollama REST API integration with streaming and timeout handling
+- [x] Tree-sitter C++ syntax parsing with fallback heuristics
+- [x] Symbol hallucination detection against extracted IR
+- [x] Multi-pass repair loop (up to 3 attempts) re-prompting with syntax error feedback
+- [x] Unit test suite covering prompting, validation, and repair flows (14 tests)
